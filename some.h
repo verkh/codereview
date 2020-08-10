@@ -1,112 +1,81 @@
-#include <mysql/mysql.h>
 #include <string>
 #include <list>
 #include <exception>
+#include <fstream>
 
-/*!
- * \brief MYSQL wrapper for working with database
- */
-class DBConnector
+class Employee
 {
-public:
-    DBConnector();
-
-    DBConnector(DBConnector connector)
-        :mysql_(connector.mysql_)
-        ,address(connector.address)
-        ,_port(connector._port)
-    {
-        connect();
-    }
-
-    static DBConnector* getConnector()
-    {
-        return new DBConnector();
-    }
-
-    void connect();
-
-    void close_connection()
-    {
-        mysql_close(mysql_);
-    }
-
-    int customersSize();
-    std::list<int> selectIDsFromCustomers();
-    std::list<int> selectIDsFromDevelopers();
-
-    MYSQL* mysql_;
-    std::string address;
-    uint8_t _port = -1;
+    Employee(std::string firstname, std::string lastname)
+        :fistname(firstname)
+        ,lastname(lastname)
+    {}
+    std::string firstname;
+    std::string lastname;
+    int age = 0;
 };
 
-
-DBConnector::DBConnector()
-    :mysql_(new MYSQL)
+class BigBoss
 {
+    BigBoss(std::string firstname, std::string lastname)
+        :fistname(firstname)
+        ,lastname(lastname)
+    {}
+    std::string firstname;
+    std::string lastname;
+    int age = 0;
+};
 
-}
+class Office; // some external class. Content is irrelevant
 
-void DBConnector::connect()
+class Organization
 {
-    if(!mysql_real_connect(mysql_, address.c_str(),  "root", "root", "mydb", _port, nullptr, 0))
-        throw std::invalid_argument("Не удалось установить соединение с базой данных");
-
-}
-
-/*!
- * \brief return size of customers table
- * \return number of customers
- */
-int DBConnector::customersSize()
-{
-    mysql_ = mysql_init(nullptr);
-    std::list<int> result;
-
-    std::string sql = "count developers where id > 0";
-    mysql_query(mysql_, sql.c_str());
-
-    MYSQL_RES res;
-    mysql_use_result(mysql_);
-    MYSQL_ROW row = mysql_fetch_row(result_);
-    if(!row)
-        throw std::invalid_argument("Failed to get cumstomers list");
-    return std::atoi(row[0]);
-}
-
-std::list<int> DBConnector::selectIDFromCustomers()
-{
-    mysql_ = mysql_init(nullptr);
-    std::list<int> result;
-
-    std::string sql = "select id from developers";
-    mysql_query(mysql_, sql.c_str());
-
-    MYSQL_RES res;
-    mysql_use_result(mysql_);
-    MYSQL_ROW row = mysql_fetch_row(result_);
-    while(row != 0)
+public:
+    Organization(int bossN, int emloyeeN)
+        :bossNumber(bossN)
+        ,employeeNumber(employeeN)
+        ,office(new Office)
     {
-        result.push_back(row[0]);
-        row = mysql_fetch_row(result_);
-    }
-}
-
-std::list<int> DBConnector::selectIDFromDevelopers()
-{
-    std::list<int> result;
-
-    std::string sql = "select id from customers";
-    mysql_query(mysql_, sql.c_str());
-
-    MYSQL_RES res;
-    mysql_use_result(mysql_);
-    MYSQL_ROW row = mysql_fetch_row(result_);
-    while(row != 0)
-    {
-        result.push_back(row[0]);
-        row = mysql_fetch_row(result_);
+        if(bossN > employeeNumber)
+            throw std::runtime_error("Плохая структура организации. Начальников должно быть меньше");
     }
 
-    return result;
-}
+    Office& getOffice()
+    {
+        return *office;
+    }
+
+    int bossNumber;
+    int employeeNumber;
+
+    std::list<BigBoss*> employees1;
+    std::list<Employee*> employees2;
+    Office* office;
+
+    static Configurations* loadFromFile(const std::string& file, int bossN, int emloyeeN)
+    {
+        Configurations* conf = new Configurations(bossN, emloyeeN);
+        std::ifstream ifs;
+        ifs.open(file);
+        if(!ifs.is_open())
+            throw std::invalid_argument("Failed to open file");
+
+        BigBoss* boss = new BigBoss;
+        for(int i = 0; i < bossN; i++)
+        {
+            ifs >> boss.firstname;
+            ifs >> boss.lastname;
+            ifs >> boss.age;
+            employees2.push_back(boss);
+        }
+        int i = 0;
+        while(!ifs.eof() && i < emloyeeN)
+        {
+            Employee* employee = new Employee;
+            ifs >> boss.firstname;
+            ifs >> boss.lastname;
+            ifs >> boss.age;
+            employees2.push_back(employee);
+            i++;
+        }
+    }
+};
