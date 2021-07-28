@@ -1,8 +1,21 @@
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class Some {
+
+    // both lists could contain really HUGE amount of employees
+    List<Employee> getSharedEmployees(List<Employee> employees1, List<Employee> employees2) {
+
+        List<Employee> employees = new ArrayList<>();
+        for(Employee e1 : employees1) {
+            if(employees2.contains(e1)) {
+                employees.add(e1);
+            }
+        }
+        return employees;
+    }
 
     /**
      * Calculate the optimal number of managers to avoid too many managers for one employee
