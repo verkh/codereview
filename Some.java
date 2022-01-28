@@ -3,14 +3,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import lombok.Getter;
+import some.otherpackage.office;
+
 public class Some {
 
-    // both lists could contain really HUGE amount of employees
-    List<Employee> getSharedEmployees(List<Employee> employees1, List<Employee> employees2) {
+    // Get employes which are working in both organizations
+    // both lists could contain really HUGE amount of employees and it would be called frequently
+    List<Employee> getSharedEmployees(Organization a, Organization b) {
 
         List<Employee> employees = new ArrayList<>();
-        for(Employee e1 : employees1) {
-            if(employees2.contains(e1)) {
+        for(Employee e1 : a.getEmployees2()) {
+            if(b.getEmployees2().contains(e1)) {
                 employees.add(e1);
             }
         }
@@ -62,47 +66,29 @@ public class Some {
         int age = 0;
     }
 
-    static class Office {
-
-    }
-
-    static class Configurations {
-        Configurations(int bossN, int emloyeeN) {
-            this.bossNumber = bossN;
-            this.employeeNumber = emloyeeN;
-        }
-
-        int bossNumber;
-        int employeeNumber;
-    }
-
-    static class Организация {
-        Организация(int bossN, int emloyeeN) {
-            this.bossNumber = bossN;
-            this.employeeNumber = emloyeeN;
-            this.office = new Office();
-            if (getPreferredNumberOfManagers(bossN, employeeNumber) != bossN)
-                throw new RuntimeException("Плохая структура организации. Начальников должно быть меньше");
-        }
-
-        Office получитьОфис() {
-            return office;
-        }
-
+    @Getter
+    @Setter
+    static class Organization {
         int bossNumber;
         int employeeNumber;
 
         List<BigBoss> employees1;
         List<Employee> employees2;
-        Office office;
+        Office office = new Office();
 
-        static Configurations loadFromFile(String file, int bossN, int emloyeeN) {
-            Configurations conf = new Configurations(bossN, emloyeeN);
+        Organization(int bossN, int emloyeeN) {
+            this.bossNumber = bossN;
+            this.employeeNumber = emloyeeN;
+            if (getPreferredNumberOfManagers(bossN, employeeNumber) != bossN)
+                throw new RuntimeException("Плохая структура организации. Начальников должно быть меньше");
+        }
 
+        static public Organization loadFromFile(String file, int bossN, int emloyeeN) {
             File f = new File(file);
 
             Scanner scanner = new Scanner(f);
 
+            // загружаем начальников из файла
             BigBoss boss = new BigBoss;
             for (int i = 0; i < bossN; i++) {
                 boss.firstname = scanner.next();
@@ -111,6 +97,7 @@ public class Some {
                 employees2.add(boss);
             }
 
+            // загружаем обычных сотрудников из файла
             int i = 0;
             while (!scanner.hasNext() && i < emloyeeN) {
                 Employee employee = new Employee;
@@ -120,8 +107,7 @@ public class Some {
                 employees2.add(employee);
                 i++;
             }
+            return null;
         }
     }
-
-    ;
 }
