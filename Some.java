@@ -74,7 +74,6 @@ public class Some {
 
         List<BigBoss> employees1;
         List<Employee> employees2;
-        Office office = new Office();
 
         Organization(int bossN, int emloyeeN) {
             this.bossNumber = bossN;
@@ -107,7 +106,6 @@ public class Some {
                 employees2.add(employee);
                 i++;
             }
-            return null;
         }
     }
 }
