@@ -10,11 +10,13 @@ public class Some {
 
     // Get employes which are working in both organizations
     // both lists could contain really HUGE amount of employees and it would be called frequently
-    List<Employee> getSharedEmployees(Organization a, Organization b) {
+    List<Employee> getSharedEmployees(Organization amazon, Organization ebay) {
 
         List<Employee> employees = new ArrayList<>();
-        for(Employee e1 : a.getEmployees2()) {
-            if(b.getEmployees2().contains(e1)) {
+
+        for(Employee e1 : amazon.getEmployees2()) {
+
+            if(ebay.getEmployees2().contains(e1)) {
                 employees.add(e1);
             }
         }
@@ -79,33 +81,7 @@ public class Some {
             this.bossNumber = bossN;
             this.employeeNumber = emloyeeN;
             if (getPreferredNumberOfManagers(bossN, employeeNumber) != bossN)
-                throw new RuntimeException("Плохая структура организации. Начальников должно быть меньше");
-        }
-
-        static public Organization loadFromFile(String file, int bossN, int emloyeeN) {
-            File f = new File(file);
-
-            Scanner scanner = new Scanner(f);
-
-            // загружаем начальников из файла
-            BigBoss boss = new BigBoss;
-            for (int i = 0; i < bossN; i++) {
-                boss.firstname = scanner.next();
-                boss.lastname = scanner.next();
-                boss.age = scanner.nextInt();
-                employees2.add(boss);
-            }
-
-            // загружаем обычных сотрудников из файла
-            int i = 0;
-            while (!scanner.hasNext() && i < emloyeeN) {
-                Employee employee = new Employee;
-                boss.firstname = scanner.next();
-                boss.lastname = scanner.next();
-                boss.age = scanner.nextInt();
-                employees2.add(employee);
-                i++;
-            }
+                throw new RuntimeException("Bad structure of the organization. Bosses should be less");
         }
     }
 }
