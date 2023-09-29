@@ -14,7 +14,7 @@ public class Store {
     private String name;
     private String description;
 
-    @ManyToMany(ma)
+    @ManyToMany
     private List<Product> products;
 }
 
@@ -27,7 +27,7 @@ public class Product {
     private String name;
     private String description;
 
-    @ManyToMany(ma)
+    @ManyToMany
     private List<Store> stores;
 }
 
