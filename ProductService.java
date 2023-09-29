@@ -6,18 +6,6 @@ import java.util.Scanner;
 import lombok.Getter;
 import some.otherpackage.office;
 
-@RestController
-@RequiredArgsConstructor
-public class ProductController {
-
-
-    pub
-    private final ProductRepository;
-
-
-
-}
-
 @Entity
 @Getter
 @Setter
